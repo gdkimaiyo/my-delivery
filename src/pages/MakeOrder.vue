@@ -1,7 +1,7 @@
 <template>
   <q-page class="column q-pb-xl">
     <div class="main-page q-pa-md q-mt-sm">
-      <div class="text-h5">Home Page</div>
+      <div class="text-h5">Make an Order</div>
       <q-separator spaced />
       <p>
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Temporibus
@@ -17,6 +17,6 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: "IndexPage",
+  name: "MakeOrder",
 });
 </script>
