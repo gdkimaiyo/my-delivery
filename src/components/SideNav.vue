@@ -38,7 +38,7 @@ const linksList = [
   },
   {
     title: "Make an Order",
-    caption: "Make your order to be ordered",
+    caption: "Make your order to be delivered",
     icon: "chat",
     link: "/make-an-order",
   },
