@@ -5,11 +5,15 @@
         <q-carousel
           v-model="slide"
           swipeable
+          infinite
+          :autoplay="autoplay"
           animated
           control-type="flat"
           control-color="primary"
           navigation
           padding
+          @mouseenter="autoplay = false"
+          @mouseleave="autoplay = true"
           height="300px"
           class="bg-transparent gt-xs"
         >
@@ -59,11 +63,15 @@
         <q-carousel
           v-model="slide"
           swipeable
+          infinite
+          :autoplay="autoplay"
           animated
           control-type="flat"
           control-color="primary"
           navigation
           padding
+          @mouseenter="autoplay = false"
+          @mouseleave="autoplay = true"
           height="200px"
           class="bg-transparent lt-sm"
         >
@@ -103,9 +111,42 @@
         <!-- Backround Image -->
         <q-img src="src/assets/bg-5.jpg" class="header-image absolute-top" />
       </div>
-      <div class="text-h5">Home Page</div>
-      <q-separator spaced />
-      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
+
+      <div class="all-items q-mt-md">
+        <div class="row justify-center">
+          <q-input
+            label-color="text-black"
+            class="search-input font-weight-bold q-ma-md"
+            standout="bg-dark text-black"
+            bg-color="grey-3"
+            dense
+            rounded
+            outlined
+            v-model="text"
+            label="Search for fries, chips, drinks, e.t.c"
+          >
+            <template v-slot:prepend>
+              <q-icon name="search" />
+            </template>
+          </q-input>
+        </div>
+        <div class="items">
+          <div class="all-items-header q-pb-md">Today's Offers</div>
+          <div class="q-pt-sm row items-start q-gutter-md">
+            <q-card
+              class="food-item-card"
+              v-for="item in items"
+              :key="item._id"
+            >
+              <img class="food-item-image" :src="item.image" />
+              <q-card-section>
+                <div class="text-h6 q-mb-xs">{{ item.item }}</div>
+                <div class="item-price">KES {{ item.price }}</div>
+              </q-card-section>
+            </q-card>
+          </div>
+        </div>
+      </div>
     </div>
   </q-page>
 </template>
@@ -120,12 +161,15 @@ export default defineComponent({
   setup() {
     return {
       slide: ref(0),
+      autoplay: ref(true),
       lorem:
         "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Itaque voluptatem totam, architecto cupiditate officia rerum, error dignissimos praesentium libero ab nemo.",
 
       items: ref(null),
       groups: ref([]),
       isLoading: ref(false),
+      text: ref(""),
+      stars: ref(4),
     };
   },
 
@@ -187,6 +231,38 @@ export default defineComponent({
 .item-name {
   font-weight: 700;
 }
+
+.search-input {
+  width: 50%;
+  max-width: 50%;
+  // color: rgba(16, 15, 15);
+  // color: rgba(101, 101, 101);
+  // background-color: rgba(238, 238, 238);
+}
+.all-items-header {
+  font-size: 28px;
+  font-weight: 700;
+}
+.food-item-card {
+  width: 23.5%;
+  max-width: 23.5%;
+
+  .food-item-image {
+    height: 176px;
+    object-fit: cover;
+    object-position: 50% 50%;
+  }
+
+  .item-price {
+    // color: rgba(0, 0, 0, 0.6);
+    color: rgba(101, 101, 101);
+    font-size: 0.92rem;
+    font-weight: 500;
+    line-height: 1.75rem;
+    letter-spacing: 0.00937em;
+  }
+}
+
 @media only screen and (max-width: 575px) {
   .my-card {
     width: 100%;
@@ -199,6 +275,18 @@ export default defineComponent({
   }
   .header-image {
     height: 200px;
+  }
+
+  .search-input {
+    width: 100%;
+    max-width: 100%;
+  }
+  .all-items-header {
+    font-size: 24px;
+  }
+  .food-item-card {
+    width: 100%;
+    max-width: 100%;
   }
 }
 </style>
