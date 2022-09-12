@@ -13,7 +13,7 @@
     <div v-for="link in essentialLinks" :key="link.title" v-bind="link">
       <q-item clickable exact :to="link.link">
         <q-item-section v-if="link.icon" avatar>
-          <q-icon :name="link.icon" />
+          <q-icon :name="link.icon" size="16px" />
         </q-item-section>
 
         <q-item-section>
@@ -33,24 +33,24 @@ import { defineComponent } from "vue";
 const linksList = [
   {
     title: "Home",
-    icon: "school",
+    icon: "fas fa-house",
     link: "/",
   },
   {
     title: "Make an Order",
     caption: "Make your order to be delivered",
-    icon: "chat",
+    icon: "fas fa-utensils",
     link: "/make-an-order",
   },
   {
     title: "Terms and Conditions",
-    icon: "record_voice_over",
+    icon: "fas fa-info-circle",
     link: "/t&cs",
   },
   {
     title: "Help",
     caption: "Help, FAQs, How to",
-    icon: "help",
+    icon: "fas fa-question-circle",
     link: "/help",
   },
 ];
