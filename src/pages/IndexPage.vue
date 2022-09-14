@@ -32,7 +32,10 @@
                 :key="item._id"
               >
                 <q-card-section class="items-center" horizontal>
-                  <q-img class="col-4 card-image" :src="item.image" />
+                  <q-img
+                    class="col-4 card-image"
+                    :src="getImgUrl(item.image)"
+                  />
                   <q-card-section>
                     <div class="text-h6 item-name">{{ item.item }}</div>
                     <div v-if="item.desc" class="ellipsis-2-lines">
@@ -84,7 +87,10 @@
             <div class="row fit items-center q-gutter-xs q-col-gutter no-wrap">
               <q-card class="my-card" flat bordered>
                 <q-card-section class="items-center" horizontal>
-                  <q-img class="col-4 card-image" :src="item.image" />
+                  <q-img
+                    class="col-4 card-image"
+                    :src="getImgUrl(item.image)"
+                  />
                   <q-card-section>
                     <div class="text-h6 item-name">{{ item.item }}</div>
                     <q-btn
@@ -138,7 +144,7 @@
               v-for="item in items"
               :key="item._id"
             >
-              <img class="food-item-image" :src="item.image" />
+              <img class="food-item-image" :src="getImgUrl(item.image)" />
               <q-card-section>
                 <div class="food-item-name q-mb-xs ellipsis">
                   {{ item.item }}
@@ -199,6 +205,11 @@ export default defineComponent({
 
     explore(itemId) {
       console.log(itemId);
+    },
+
+    // HELPER functions
+    getImgUrl(image) {
+      return new URL(`../assets/foodimages/${image}`, import.meta.url).href;
     },
   },
 
