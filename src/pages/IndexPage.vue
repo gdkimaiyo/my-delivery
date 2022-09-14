@@ -109,7 +109,7 @@
         </q-carousel>
 
         <!-- Backround Image -->
-        <q-img src="src/assets/bg-5.jpg" class="header-image absolute-top" />
+        <q-img src="../assets/bg-5.jpg" class="header-image absolute-top" />
       </div>
 
       <div class="all-items q-mt-md">
@@ -140,7 +140,9 @@
             >
               <img class="food-item-image" :src="item.image" />
               <q-card-section>
-                <div class="text-h6 q-mb-xs">{{ item.item }}</div>
+                <div class="food-item-name q-mb-xs ellipsis">
+                  {{ item.item }}
+                </div>
                 <div class="item-price">KES {{ item.price }}</div>
               </q-card-section>
             </q-card>
@@ -247,6 +249,11 @@ export default defineComponent({
   width: 23.5%;
   max-width: 23.5%;
 
+  .food-item-name {
+    font-size: 16px;
+    font-weight: bold;
+  }
+
   .food-item-image {
     height: 176px;
     object-fit: cover;
@@ -276,6 +283,10 @@ export default defineComponent({
   .header-image {
     height: 200px;
   }
+  .q-carousel__slide,
+  .q-carousel .q-carousel--padding {
+    padding: 0;
+  }
 
   .search-input {
     width: 100%;
@@ -285,8 +296,16 @@ export default defineComponent({
     font-size: 24px;
   }
   .food-item-card {
-    width: 100%;
-    max-width: 100%;
+    width: 45%;
+    max-width: 45%;
+
+    .food-item-name {
+      font-weight: 500;
+    }
+
+    .food-item-image {
+      height: 100px;
+    }
   }
 }
 </style>
