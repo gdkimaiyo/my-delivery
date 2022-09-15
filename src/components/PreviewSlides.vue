@@ -132,7 +132,7 @@
       <div class="items">
         <div class="all-items-header q-pb-md">Today's Offers</div>
 
-        <AllItems :items="items" />
+        <AllItems :items="items" :isLoading="isLoading" />
       </div>
     </div>
   </div>
@@ -140,6 +140,7 @@
 
 <script>
 import { defineComponent, ref } from "vue";
+import { Notify } from "quasar";
 import AllItems from "../components/AllItems.vue";
 import { getItems } from "../shared/services/item.service";
 import { getImgUrl } from "../utils/heplers";
@@ -154,7 +155,7 @@ export default defineComponent({
   setup() {
     const now = new Date();
     let msTillReload =
-      new Date(now.getFullYear(), now.getMonth(), now.getDate(), 17, 14, 0, 0) -
+      new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12, 0, 0, 0) -
       now;
     if (msTillReload < 0) {
       msTillReload += 86400000; // it's past reload time (noon), try the following day.
@@ -183,13 +184,17 @@ export default defineComponent({
             const chunk = this.items.slice(i, i + chunkSize);
             this.groups.push({ groups: chunk });
           }
-
-          console.log(JSON.parse(JSON.stringify(this.groups)));
           this.isLoading = false;
         })
         .catch((error) => {
           this.items = [];
           this.isLoading = false;
+          Notify.create({
+            type: "negative",
+            message: "CONNECTION REFUSED.",
+            group: false,
+            timeout: 5000,
+          });
         });
     },
 

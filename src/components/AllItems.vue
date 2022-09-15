@@ -1,5 +1,8 @@
 <template>
-  <div class="q-pt-sm row items-start q-gutter-md">
+  <div
+    class="q-pt-sm row items-start q-gutter-md"
+    v-if="!isLoading && items?.length > 0"
+  >
     <q-card class="food-item-card" v-for="item in items" :key="item._id">
       <img class="food-item-image" :src="getImgUrl(item.image)" />
       <q-card-section>
@@ -8,6 +11,28 @@
         </div>
         <div class="item-price">KES {{ item.price }}</div>
       </q-card-section>
+    </q-card>
+  </div>
+  <div
+    class="q-pt-sm row items-start q-gutter-md"
+    v-else-if="!isLoading && items?.length === 0"
+  >
+    <div class="text-negative">Connection Refused. Please reload.</div>
+  </div>
+  <div class="q-pt-sm row items-start q-gutter-md" v-else>
+    <q-card class="food-item-card" v-for="index in 10" :key="index">
+      <q-skeleton height="150px" square />
+
+      <q-item>
+        <q-item-section>
+          <q-item-label>
+            <q-skeleton type="text" />
+          </q-item-label>
+          <q-item-label caption>
+            <q-skeleton type="text" />
+          </q-item-label>
+        </q-item-section>
+      </q-item>
     </q-card>
   </div>
 </template>
@@ -21,6 +46,11 @@ export default defineComponent({
 
   props: {
     items: Array,
+
+    isLoading: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   methods: {
