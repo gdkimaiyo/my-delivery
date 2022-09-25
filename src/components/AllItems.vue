@@ -3,7 +3,12 @@
     class="q-pt-sm row items-start q-gutter-md"
     v-if="!isLoading && items?.length > 0"
   >
-    <q-card class="food-item-card" v-for="item in items" :key="item._id">
+    <q-card
+      class="food-item-card cursor-pointer"
+      v-for="item in items"
+      :key="item._id"
+      @click="viewItem(item._id)"
+    >
       <img class="food-item-image" :src="getImgUrl(item.image)" />
       <q-card-section>
         <div class="food-item-name q-mb-xs ellipsis">
@@ -55,6 +60,10 @@ export default defineComponent({
 
   methods: {
     getImgUrl,
+
+    viewItem(itemId) {
+      this.$router.push(`/items/${itemId}`);
+    },
   },
 });
 </script>
