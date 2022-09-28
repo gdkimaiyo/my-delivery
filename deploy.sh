@@ -3,6 +3,9 @@
 # abort on errors
 set -e
 
+# remove previous dist files
+rm -rf dist
+
 # build
 quasar build
 
