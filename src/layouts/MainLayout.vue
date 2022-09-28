@@ -13,7 +13,13 @@
 
         <q-toolbar-title></q-toolbar-title>
 
-        <div @click="goHome()" style="cursor: pointer">myDelivery</div>
+        <!-- <div @click="goHome()" style="cursor: pointer">myDelivery</div> -->
+        <div class="">
+          <q-btn unelevated rounded no-caps color="dark">
+            <q-icon name="fas fa-cart-plus" size="18px" class="q-pr-sm" />
+            Cart
+          </q-btn>
+        </div>
       </q-toolbar>
     </q-header>
 
