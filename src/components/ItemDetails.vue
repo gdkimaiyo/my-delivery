@@ -51,7 +51,25 @@
       <div class="text-negative">Connection Refused. Please reload.</div>
     </div>
     <div class="details q-pa-md q-mb-lg" v-else>
-      <div class="text-subtitle2">Loading...</div>
+      <div class="item-image item-image-skeleton">
+        <q-skeleton height="100%" square />
+      </div>
+      <div class="item-desc">
+        <!-- Title Skeleton -->
+        <div class="text-h6 q-mt-md">
+          <q-skeleton type="QBtn" width="100%" />
+        </div>
+        <!-- Desc Skeleton -->
+        <div class="text-subtitle1 q-mt-md q-mb-lg">
+          <q-skeleton type="text" />
+          <q-skeleton type="text" />
+          <q-skeleton type="text" width="25%" />
+        </div>
+
+        <div class="q-my-lg">
+          <q-skeleton type="QBtn" class="add-to-cart-btn" />
+        </div>
+      </div>
     </div>
     <q-separator inset class="gt-xs" />
   </div>
@@ -161,6 +179,10 @@ export default defineComponent({
   width: 200px;
 }
 
+.item-image-skeleton {
+  height: 450px;
+}
+
 @media only screen and (max-width: 575px) {
   .item-details {
     margin-top: 0;
@@ -183,6 +205,10 @@ export default defineComponent({
   }
   .add-to-cart-btn {
     width: 100%;
+  }
+
+  .item-image-skeleton {
+    height: 330px;
   }
 }
 </style>
