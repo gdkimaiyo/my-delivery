@@ -42,6 +42,14 @@
             Add to Order
           </q-btn>
         </div>
+
+        <div
+          class="go-back lt-sm text-primary cursor-pointer"
+          @click="goBack()"
+        >
+          <q-icon name="fas fa-arrow-left" class="q-pr-sm" size="16px" />
+          Go back
+        </div>
       </div>
     </div>
     <div
@@ -200,7 +208,8 @@ export default defineComponent({
     padding: 16px;
     margin-top: 0;
   }
-  .number-ordered {
+  .number-ordered,
+  .go-back {
     text-align: center;
   }
   .add-to-cart-btn {
