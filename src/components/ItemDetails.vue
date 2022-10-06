@@ -1,8 +1,10 @@
 <template>
   <div class="item-details">
-    <div class="go-back gt-xs text-primary cursor-pointer" @click="goBack()">
-      <q-icon name="fas fa-arrow-left" class="q-pr-sm" size="16px" />
-      Go back
+    <div class="go-back gt-xs text-primary">
+      <span class="cursor-pointer" @click="goBack()">
+        <q-icon name="fas fa-arrow-left" class="q-pr-sm" size="16px" />
+        Go back
+      </span>
     </div>
     <div class="details q-mb-lg" v-if="!isLoading && details !== null">
       <div class="item-image">
@@ -38,17 +40,25 @@
             rounded
             color="primary"
             class="add-to-cart-btn text-weight-bold"
+            @click="addToCart()"
           >
             Add to Order
           </q-btn>
         </div>
 
-        <div
-          class="go-back lt-sm text-primary cursor-pointer"
-          @click="goBack()"
-        >
-          <q-icon name="fas fa-arrow-left" class="q-pr-sm" size="16px" />
-          Go back
+        <div class="subtitle q-my-lg" v-if="quantity > 0">
+          <q-icon name="fas fa-circle-info" class="q-pr-sm" size="16px" />
+          You have added {{ quantity }}
+          <span v-if="quantity > 1">quantities</span>
+          <span v-else>quantity</span>
+          of this item to cart. Add new order to update cart.
+        </div>
+
+        <div class="go-back lt-sm text-primary">
+          <span class="cursor-pointer" @click="goBack()">
+            <q-icon name="fas fa-arrow-left" class="q-pr-sm" size="16px" />
+            Go back
+          </span>
         </div>
       </div>
     </div>
@@ -102,6 +112,7 @@ export default defineComponent({
       isLoading: ref(false),
 
       numberToOrder: ref(1),
+      quantity: ref(0),
     };
   },
 
@@ -113,7 +124,16 @@ export default defineComponent({
       getItem(this.itemId)
         .then((response) => {
           this.details = response.data;
-          console.log(JSON.parse(JSON.stringify(this.details)));
+          const cart = JSON.parse(localStorage.getItem("my_cart"));
+          if (
+            cart !== null &&
+            cart?.filter((item) => item?._id === this.details?._id)?.length > 0
+          ) {
+            this.quantity = cart?.filter(
+              (item) => item?._id === this.details?._id
+            )[0]?.quantity;
+            this.numberToOrder = this.quantity;
+          }
           this.isLoading = false;
         })
         .catch((error) => {
@@ -147,6 +167,29 @@ export default defineComponent({
       } else {
         this.numberToOrder =
           this.numberToOrder > 1 ? this.numberToOrder - 1 : 1;
+      }
+    },
+
+    addToCart() {
+      if (localStorage.getItem("my_cart") && typeof Storage !== undefined) {
+        let my_cart = JSON.parse(localStorage.getItem("my_cart"));
+        // Remove current item from localstorage and update quantity.
+        my_cart = my_cart?.filter((item) => item?._id !== this.details?._id);
+        my_cart.push({
+          ...this.details,
+          quantity: this.numberToOrder,
+        });
+        localStorage.setItem("my_cart", JSON.stringify(my_cart));
+        this.quantity = this.numberToOrder;
+      } else {
+        const my_cart = [
+          {
+            ...this.details,
+            quantity: this.numberToOrder,
+          },
+        ];
+        localStorage.setItem("my_cart", JSON.stringify(my_cart));
+        this.quantity = this.numberToOrder;
       }
     },
   },
@@ -185,6 +228,11 @@ export default defineComponent({
 }
 .add-to-cart-btn {
   width: 200px;
+}
+
+.subtitle {
+  color: rgba(121, 131, 143, 0.85);
+  font-size: 14px;
 }
 
 .item-image-skeleton {

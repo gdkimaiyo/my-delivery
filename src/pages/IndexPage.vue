@@ -8,7 +8,7 @@
 
 <script>
 import { defineComponent } from "vue";
-import PreviewSlides from "../components/PreviewSlides.vue";
+import PreviewSlides from "components/PreviewSlides.vue";
 
 export default defineComponent({
   name: "IndexPage",

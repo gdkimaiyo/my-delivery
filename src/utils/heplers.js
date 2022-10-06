@@ -8,3 +8,11 @@ export const randomNumber = (min, max) => {
     // min and max included
     return Math.floor(Math.random() * (max - min + 1) + min);
 };
+
+export const formatCurrency = (amount) => {
+    const formatter = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: "KES",
+    });
+    return formatter.format(amount);
+}

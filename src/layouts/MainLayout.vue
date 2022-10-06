@@ -17,7 +17,15 @@
         <div class="">
           <q-btn unelevated rounded no-caps color="dark">
             <q-icon name="fas fa-cart-plus" size="18px" class="q-pr-sm" />
-            Cart
+            Checkout
+
+            <q-menu
+              transition-show="jump-down"
+              transition-hide="jump-up"
+              max-width="400px"
+            >
+              <CheckoutDialog />
+            </q-menu>
           </q-btn>
         </div>
       </q-toolbar>
@@ -36,12 +44,14 @@
 <script>
 import { defineComponent, ref } from "vue";
 import SideNav from "components/SideNav.vue";
+import CheckoutDialog from "components/CheckoutDialog.vue";
 
 export default defineComponent({
   name: "MainLayout",
 
   components: {
     SideNav,
+    CheckoutDialog,
   },
 
   setup() {
