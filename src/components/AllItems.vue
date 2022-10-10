@@ -72,39 +72,37 @@ export default defineComponent({
 .food-item-card {
   width: 18.55%;
   max-width: 18.55%;
+}
+.food-item-name {
+  font-size: 16px;
+  font-weight: bold;
+}
 
-  .food-item-name {
-    font-size: 16px;
-    font-weight: bold;
-  }
+.food-item-image {
+  height: 150px;
+  object-fit: cover;
+  object-position: 50% 50%;
+}
 
-  .food-item-image {
-    height: 150px;
-    object-fit: cover;
-    object-position: 50% 50%;
-  }
-
-  .item-price {
-    // color: rgba(0, 0, 0, 0.6);
-    color: rgba(101, 101, 101);
-    font-size: 0.92rem;
-    font-weight: 500;
-    line-height: 1.75rem;
-    letter-spacing: 0.00937em;
-  }
+.item-price {
+  // color: rgba(0, 0, 0, 0.6);
+  color: rgba(101, 101, 101);
+  font-size: 0.92rem;
+  font-weight: 500;
+  line-height: 1.75rem;
+  letter-spacing: 0.00937em;
 }
 @media only screen and (max-width: 575px) {
   .food-item-card {
     width: 45%;
     max-width: 45%;
+  }
+  .food-item-name {
+    font-weight: 500;
+  }
 
-    .food-item-name {
-      font-weight: 500;
-    }
-
-    .food-item-image {
-      height: 100px;
-    }
+  .food-item-image {
+    height: 100px;
   }
 }
 </style>

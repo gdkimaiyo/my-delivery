@@ -4,7 +4,7 @@
       <div class="row justify-center text-h6 q-mb-md">My Order</div>
       <div class="" v-for="(item, index) in cartItems" :key="index">
         <q-item>
-          <q-item-section top avatar>
+          <q-item-section avatar>
             {{ item.quantity }}
           </q-item-section>
 
@@ -18,6 +18,17 @@
           <q-item-section side top>
             <q-item-label caption>
               {{ formatCurrency(item.price * item.quantity) }}
+              <q-btn
+                flat
+                round
+                color="info"
+                icon="cancel"
+                @click="removeItem(item._id)"
+              >
+                <q-tooltip class="bg-info" :offset="[10, 10]">
+                  Remove from cart
+                </q-tooltip>
+              </q-btn>
             </q-item-label>
           </q-item-section>
         </q-item>
@@ -45,21 +56,17 @@ import { Notify } from "quasar";
 import { formatCurrency } from "../utils/heplers";
 
 export default defineComponent({
-  name: "CheckoutDialog",
+  name: "ShoppingCart",
 
   setup() {
-    const author = JSON.parse(localStorage.getItem("my_cart"));
+    const cart = JSON.parse(localStorage.getItem("my_cart"));
 
     return {
-      cartItems: ref(author),
+      cartItems: ref(cart),
     };
   },
 
   methods: {
-    viewItem(itemId) {
-      this.$router.push(`/items/${itemId}`);
-    },
-
     formatCurrency,
 
     getCheckoutAmnt() {
@@ -68,6 +75,17 @@ export default defineComponent({
         amnt += item.price * item.quantity;
       });
       return amnt;
+    },
+
+    viewItem(itemId) {
+      this.$router.push(`/items/${itemId}`);
+    },
+
+    removeItem(itemId) {
+      this.cartItems = this.cartItems.filter((item) => item?._id !== itemId);
+      let my_cart = JSON.parse(localStorage.getItem("my_cart"));
+      my_cart = my_cart?.filter((item) => item?._id !== itemId);
+      localStorage.setItem("my_cart", JSON.stringify(my_cart));
     },
 
     checkout() {
