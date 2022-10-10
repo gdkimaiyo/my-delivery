@@ -22,9 +22,9 @@
             <q-menu
               transition-show="jump-down"
               transition-hide="jump-up"
-              max-width="400px"
+              max-width="450px"
             >
-              <CheckoutDialog />
+              <ShoppingCart />
             </q-menu>
           </q-btn>
         </div>
@@ -44,14 +44,14 @@
 <script>
 import { defineComponent, ref } from "vue";
 import SideNav from "components/SideNav.vue";
-import CheckoutDialog from "components/CheckoutDialog.vue";
+import ShoppingCart from "src/components/ShoppingCart.vue";
 
 export default defineComponent({
   name: "MainLayout",
 
   components: {
     SideNav,
-    CheckoutDialog,
+    ShoppingCart,
   },
 
   setup() {

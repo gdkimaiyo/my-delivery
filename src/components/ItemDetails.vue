@@ -14,15 +14,18 @@
         <div class="text-h6">
           {{ details.item }}
         </div>
-        <div class="text-subtitle1" v-if="details.desc">
+        <div class="subtitle">
+          {{ formatCurrency(details?.price) }}
+        </div>
+        <div class="text-subtitle1 q-mt-lg" v-if="details.desc">
           {{ details.desc }}
         </div>
-        <div class="number-ordered q-mt-lg q-mb-xl">
+        <div class="number-ordered q-mt-lg q-mb-md">
           <q-btn
             round
             style="background: rgba(101, 101, 101, 0.75)"
             icon="fas fa-minus"
-            class="text-white q-mr-md"
+            class="text-white q-mr-lg"
             @click="incrementNumber('minus')"
           />
           <span style="color: rgba(0, 0, 0, 0.5)">{{ numberToOrder }}</span>
@@ -30,7 +33,7 @@
             round
             style="background: rgba(101, 101, 101, 0.75)"
             icon="fas fa-plus"
-            class="text-white q-ml-md"
+            class="text-white q-ml-lg"
             @click="incrementNumber('plus')"
           />
         </div>
@@ -98,7 +101,7 @@ import { defineComponent, ref } from "vue";
 import { Notify } from "quasar";
 import { useRoute } from "vue-router";
 import { getItem } from "../shared/services/item.service";
-import { getImgUrl } from "../utils/heplers";
+import { getImgUrl, formatCurrency } from "../utils/heplers";
 
 export default defineComponent({
   name: "ItemDetails",
@@ -118,6 +121,7 @@ export default defineComponent({
 
   methods: {
     getImgUrl,
+    formatCurrency,
 
     getItemDetails() {
       this.isLoading = true;
