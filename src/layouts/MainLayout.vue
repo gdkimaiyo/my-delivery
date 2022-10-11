@@ -23,6 +23,7 @@
               transition-show="jump-down"
               transition-hide="jump-up"
               max-width="450px"
+              max-height="93vh"
             >
               <ShoppingCart />
             </q-menu>

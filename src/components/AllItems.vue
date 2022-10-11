@@ -25,7 +25,7 @@
     <div class="text-negative">Connection Refused. Please reload.</div>
   </div>
   <div class="q-pt-sm row items-start q-gutter-md" v-else>
-    <q-card class="food-item-card" v-for="index in 10" :key="index">
+    <q-card class="food-item-card" v-for="index in 5" :key="index">
       <q-skeleton height="150px" square />
 
       <q-item>

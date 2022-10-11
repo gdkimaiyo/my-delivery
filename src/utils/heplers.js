@@ -16,3 +16,21 @@ export const formatCurrency = (amount) => {
     });
     return formatter.format(amount);
 }
+
+export const getRandomItems = (arr, n) => {
+    let result = new Array(n);
+    let len = arr.length;
+    let taken = new Array(len);
+
+    if (n > len) {
+        // Return original
+        return arr;
+    }
+
+    while (n--) {
+        var x = Math.floor(Math.random() * len);
+        result[n] = arr[x in taken ? taken[x] : x];
+        taken[x] = --len in taken ? taken[len] : len;
+    }
+    return result;
+}

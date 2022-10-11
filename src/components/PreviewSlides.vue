@@ -131,8 +131,19 @@
       </div>
       <div class="items">
         <div class="all-items-header q-pb-md">Today's Offers</div>
-
         <AllItems :items="items" :isLoading="isLoading" />
+
+        <!-- Items under chips category -->
+        <div class="category-header q-mt-xl q-pb-md">Chips & Chicken</div>
+        <AllItems :items="chips" :isLoading="isLoading" />
+
+        <!-- Items under alcoholic drinks category -->
+        <div class="category-header q-mt-xl q-pb-md">Drinks</div>
+        <AllItems :items="alDrinks" :isLoading="isLoading" />
+
+        <!-- Items under non-alcoholic drinks category -->
+        <!-- <div class="category-header q-mt-xl q-pb-md">Non-Alcoholic Drinks</div>
+        <AllItems :items="nonAlDrinks" :isLoading="isLoading" /> -->
       </div>
     </div>
   </div>
@@ -143,7 +154,7 @@ import { defineComponent, ref } from "vue";
 import { Notify } from "quasar";
 import AllItems from "../components/AllItems.vue";
 import { getItems } from "../shared/services/item.service";
-import { getImgUrl } from "../utils/heplers";
+import { getImgUrl, getRandomItems } from "../utils/heplers";
 
 export default defineComponent({
   name: "PreviewSlides",
@@ -165,6 +176,9 @@ export default defineComponent({
       slide: ref(0),
       autoplay: ref(true),
       items: ref(null),
+      chips: ref(null),
+      alDrinks: ref(null),
+      nonAlDrinks: ref(null),
       groups: ref([]),
       isLoading: ref(false),
       msecTillReload: ref(msTillReload),
@@ -184,10 +198,40 @@ export default defineComponent({
             const chunk = this.items.slice(i, i + chunkSize);
             this.groups.push({ groups: chunk });
           }
+
+          const tempItems = this.items;
+
+          // Get 5 random items
+          this.items = getRandomItems(this.items, 5);
+
+          // Get items from chips category and get 5 random items
+          this.chips = tempItems?.filter(
+            (item) =>
+              item?.category?.category === "Chips" ||
+              item?.category?.category === "Chicken"
+          );
+          this.chips = getRandomItems(this.chips, 5);
+
+          // Get items from alcoholic drinks category and get 5 random items
+          this.alDrinks = tempItems?.filter(
+            (item) =>
+              item?.category?.category === "Alcoholic Drinks" ||
+              item?.category?.category === "Non-Alcoholic Drinks"
+          );
+          this.alDrinks = getRandomItems(this.alDrinks, 5);
+
+          // Get items from non-alcoholic drinks category and get 5 random items
+          this.nonAlDrinks = tempItems?.filter(
+            (item) => item?.category?.category === "Non-Alcoholic Drinks"
+          );
+          this.nonAlDrinks = getRandomItems(this.nonAlDrinks, 5);
           this.isLoading = false;
         })
         .catch((error) => {
           this.items = [];
+          this.chips = [];
+          this.alDrinks = [];
+          this.nonAlDrinks = [];
           this.isLoading = false;
           Notify.create({
             type: "negative",
@@ -253,6 +297,11 @@ export default defineComponent({
 .all-items-header {
   font-size: 28px;
   font-weight: 700;
+}
+.category-header {
+  font-size: 20px;
+  font-weight: 700;
+  // color: rgba(121, 131, 143, 0.85);
 }
 
 @media only screen and (max-width: 575px) {
