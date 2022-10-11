@@ -14,7 +14,7 @@
         <div class="food-item-name q-mb-xs ellipsis">
           {{ item.item }}
         </div>
-        <div class="item-price">KES {{ item.price }}</div>
+        <div class="item-price">{{ formatCurrency(item.price) }}</div>
       </q-card-section>
     </q-card>
   </div>
@@ -44,7 +44,7 @@
 
 <script>
 import { defineComponent } from "vue";
-import { getImgUrl } from "../utils/heplers";
+import { getImgUrl, formatCurrency } from "../utils/heplers";
 
 export default defineComponent({
   name: "AllItems",
@@ -60,6 +60,7 @@ export default defineComponent({
 
   methods: {
     getImgUrl,
+    formatCurrency,
 
     viewItem(itemId) {
       this.$router.push(`/items/${itemId}`);
