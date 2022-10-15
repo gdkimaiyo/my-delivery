@@ -42,7 +42,7 @@
                     rounded
                     color="primary"
                     class="q-mt-md"
-                    @click="explore(item._id)"
+                    @click="explore(item.category._id)"
                   >
                     Order Now
                     <q-icon
@@ -91,7 +91,7 @@
                     rounded
                     color="primary"
                     class="q-mt-sm"
-                    @click="explore(item._id)"
+                    @click="explore(item.category._id)"
                   >
                     Order Now
                     <q-icon
@@ -244,8 +244,8 @@ export default defineComponent({
 
     getImgUrl,
 
-    explore(itemId) {
-      console.log(itemId);
+    explore(categoryId) {
+      this.$router.push(`/items/category/${categoryId}`);
     },
 
     triggerReload() {
