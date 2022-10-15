@@ -1,6 +1,6 @@
 <template>
   <div class="row no-wrap q-pa-md">
-    <div class="column">
+    <div class="column" v-if="cartItems?.length > 0">
       <div class="row justify-center text-h6 q-mb-md">My Order</div>
       <div class="" v-for="(item, index) in cartItems" :key="index">
         <q-item>
@@ -45,6 +45,17 @@
           <q-icon name="fas fa-circle" class="q-px-sm" size="6px" />
           {{ formatCurrency(getCheckoutAmnt()) }}
         </q-btn>
+      </div>
+    </div>
+
+    <div class="column" v-else>
+      <div class="row justify-center q-mt-xl q-mb-lg">
+        <div>
+          <q-icon name="fas fa-cart-plus" size="32px" class="cart-icon" />
+        </div>
+        <div class="subtitle q-my-lg">
+          Your shopping cart is empty! Add items to your order for checkout.
+        </div>
       </div>
     </div>
   </div>
@@ -104,6 +115,12 @@ export default defineComponent({
 <style lang="scss" scoped>
 .checkout-btn {
   width: 200px;
+}
+.cart-icon {
+  color: rgba(121, 131, 143, 0.85);
+}
+.subtitle {
+  font-size: 14px;
 }
 @media only screen and (max-width: 575px) {
   .checkout-btn {
