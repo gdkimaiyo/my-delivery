@@ -39,7 +39,6 @@ import { Notify } from "quasar";
 import { useRoute } from "vue-router";
 import AllItems from "../components/AllItems.vue";
 import { getItems } from "../shared/services/item.service";
-import { getImgUrl } from "../utils/heplers";
 
 export default defineComponent({
   name: "CategoryPage",
@@ -82,8 +81,6 @@ export default defineComponent({
           });
         });
     },
-
-    getImgUrl,
   },
 
   mounted() {
@@ -100,11 +97,6 @@ export default defineComponent({
 .all-items-header {
   font-size: 28px;
   font-weight: 700;
-}
-.category-header {
-  font-size: 20px;
-  font-weight: 700;
-  // color: rgba(121, 131, 143, 0.85);
 }
 
 @media only screen and (max-width: 575px) {
