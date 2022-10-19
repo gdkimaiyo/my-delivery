@@ -14,7 +14,7 @@
         <q-toolbar-title></q-toolbar-title>
 
         <!-- <div @click="goHome()" style="cursor: pointer">myDelivery</div> -->
-        <div class="">
+        <div class="" v-if="showCheckout">
           <q-btn unelevated rounded no-caps color="dark">
             <q-icon name="fas fa-cart-plus" size="18px" class="q-pr-sm" />
             Checkout
@@ -44,8 +44,9 @@
 
 <script>
 import { defineComponent, ref } from "vue";
+import { useRoute } from "vue-router";
 import SideNav from "components/SideNav.vue";
-import ShoppingCart from "src/components/ShoppingCart.vue";
+import ShoppingCart from "components/ShoppingCart.vue";
 
 export default defineComponent({
   name: "MainLayout",
@@ -69,6 +70,12 @@ export default defineComponent({
   methods: {
     goHome() {
       this.$router.push("/");
+    },
+  },
+
+  computed: {
+    showCheckout() {
+      return useRoute().path === "/make-an-order" ? false : true;
     },
   },
 });
