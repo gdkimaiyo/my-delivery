@@ -34,3 +34,41 @@ export const getRandomItems = (arr, n) => {
     }
     return result;
 }
+
+export const validateEmail = (email) => {
+    if (email) {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(email);
+    } else {
+        return false;
+    }
+};
+
+export const validateMobile = (phone) => {
+    const re = /^\d{10}$/;
+    const re2 = /^\+?([0-9]{3})\)?([0-9]{9})$/;
+    if (phone) {
+        if (phone.match(re) || phone.match(re2)) {
+            return true;
+        }
+        return false;
+    }
+    return false; // To change to false if cell phone number is required
+};
+
+// Get firstname and lastname from fullname
+export const getName = (name, fullname) => { // name is either firstname or lastname
+    if (name === "first") {
+        let arr = fullname?.split(" ");
+        return titleCase(arr[0]);
+    } else {
+        let arr = fullname?.split(" ");
+        return titleCase(arr[1]);
+    }
+};
+
+export const titleCase = (str) => {
+    return str?.toLowerCase()?.replace(/\b\S/g, function (t) {
+        return t?.toUpperCase();
+    });
+};
