@@ -71,8 +71,8 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .food-item-card {
-  width: 18.55%;
-  max-width: 18.55%;
+  width: 18.5%;
+  max-width: 18.5%;
 }
 .food-item-name {
   font-size: 16px;
@@ -95,8 +95,8 @@ export default defineComponent({
 }
 @media only screen and (max-width: 575px) {
   .food-item-card {
-    width: 45%;
-    max-width: 45%;
+    width: 44.55%;
+    max-width: 44.55%;
   }
   .food-item-name {
     font-weight: 500;
