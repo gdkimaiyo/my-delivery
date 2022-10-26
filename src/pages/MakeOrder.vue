@@ -39,7 +39,7 @@
               <div
                 class="q-mt-xl q-mb-lg"
                 style="text-align: center"
-                v-if="cartItems?.length == 0"
+                v-if="cartItems?.length == 0 || cartItems == null"
               >
                 <div class="row justify-center" style="display: block">
                   <q-icon
