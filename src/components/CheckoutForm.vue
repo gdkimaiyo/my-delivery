@@ -43,13 +43,14 @@
       class="q-py-md"
       filled
       v-model="location"
-      label="Your location *"
+      label="Your precise location *"
       dense
       type="text"
       lazy-rules
       :rules="[
         (val) =>
-          (val && val.trim().length > 0) || 'Please provide your location',
+          (val && val.trim().length > 0) ||
+          'Please provide your exact location',
       ]"
     />
     <q-input
@@ -70,7 +71,7 @@
     />
     <div class="q-mt-md">
       <q-btn no-caps rounded :loading="isLoading" type="submit" color="primary">
-        Submit
+        Checkout
         <template v-slot:loading>
           <q-spinner class="on-left" color="white" />
         </template>
@@ -83,12 +84,16 @@
 <script>
 import { defineComponent, ref } from "vue";
 import { Notify } from "quasar";
-import { validateEmail, validateMobile } from "../utils/heplers";
+import { validateEmail, validateMobile, getName } from "../utils/heplers";
+import { getCustomerByEmail, register } from "../shared/services/user.service";
+import { saveOrder } from "../shared/services/delivery.service";
 
 export default defineComponent({
   name: "CheckoutForm",
 
   setup() {
+    const cart = JSON.parse(localStorage.getItem("my_cart"));
+
     return {
       fullname: ref(null),
       cellPhone: ref(null),
@@ -96,33 +101,119 @@ export default defineComponent({
       location: ref(null),
       pinLocation: ref(null),
       message: ref(null),
+      cartItems: ref(cart),
       isLoading: ref(false),
     };
   },
 
   methods: {
-    onSubmit() {
+    async onSubmit() {
       this.isLoading = true;
 
-      const data = {
-        fullname: this.fullname,
+      const user = {
+        firstname: this.getName("first", this.fullname),
+        lastname: this.getName("last", this.fullname),
         cellPhone: this.cellPhone,
         email: this.email,
         location: this.location,
-        pinLocation: this.pinLocation,
-        message: this.message,
       };
 
-      console.log(data);
+      const order = {
+        location: this.location,
+        pin: this.pinLocation,
+        order: JSON.parse(JSON.stringify(this.cartItems)),
+        message: this.message,
+        amount: this.getCheckoutAmnt(),
+      };
 
-      setTimeout(() => {
-        this.isLoading = false;
-        this.$emit("checkoutSuccess");
-      }, 3000);
+      console.log(user, "Customer");
+      console.log(order, "Order");
+
+      await getCustomerByEmail(user.email)
+        .then((response) => {
+          console.log(JSON.parse(JSON.stringify(response.data)), "Found user");
+          this.saveUserOrder(response.data._id, order);
+
+          // Update customer information, incase user updated their name, location, phone number, e.t.c
+          // TODO
+        })
+        .catch((error) => {
+          if (error?.response?.status === 404) {
+            this.saveCustomer(user, order);
+          } else {
+            Notify.create({
+              type: "warning",
+              message: error?.response?.data?.message
+                ? error.response.data.message
+                : "Request failed. Please check your network connection.",
+              group: false,
+            });
+            this.isLoading = false;
+          }
+        });
+    },
+
+    async saveCustomer(payload, order) {
+      await register(payload)
+        .then((res) => {
+          console.log(JSON.parse(JSON.stringify(res.data)), "Saved user");
+          // Store customer info in localstorage
+          this.cacheUser(res.data);
+
+          this.saveUserOrder(res.data._id, order);
+        })
+        .catch((error) => {
+          this.isLoading = false;
+        });
+    },
+
+    async saveUserOrder(userId, order) {
+      const payload = {
+        ...order,
+        customer: userId,
+      };
+      await saveOrder(payload)
+        .then((res) => {
+          // Save order info in localstorage
+          if (typeof Storage !== undefined) {
+            let my_orders = [];
+            if (localStorage.getItem("my_orders")) {
+              my_orders = JSON.parse(localStorage.getItem("my_orders"));
+              my_orders.push(res.data);
+              localStorage.setItem("my_orders", JSON.stringify(my_orders));
+            } else {
+              my_orders.push(res.data);
+              localStorage.setItem("my_orders", JSON.stringify(my_orders));
+            }
+          }
+          this.$emit("checkoutSuccess");
+          this.isLoading = false;
+        })
+        .catch((error) => {
+          this.isLoading = false;
+        });
+    },
+
+    cacheUser(data) {
+      if (typeof Storage !== undefined) {
+        // Remove any existing record in localstorage
+        localStorage.removeItem("md_user");
+        // Save new information
+        localStorage.setItem("md_user", JSON.stringify(data));
+      }
+    },
+
+    getCheckoutAmnt() {
+      let amnt = 0;
+      this.cartItems?.forEach((item) => {
+        amnt += item.price * item.quantity;
+      });
+      return amnt;
     },
 
     validateEmail,
     validateMobile,
+    getName,
   },
 });
 </script>
