@@ -85,7 +85,11 @@
 import { defineComponent, ref } from "vue";
 import { Notify } from "quasar";
 import { validateEmail, validateMobile, getName } from "../utils/heplers";
-import { getCustomerByEmail, register } from "../shared/services/user.service";
+import {
+  getCustomerByEmail,
+  register,
+  uCustomer,
+} from "../shared/services/user.service";
 import { saveOrder } from "../shared/services/delivery.service";
 
 export default defineComponent({
@@ -126,16 +130,17 @@ export default defineComponent({
         amount: this.getCheckoutAmnt(),
       };
 
-      console.log(user, "Customer");
-      console.log(order, "Order");
-
       await getCustomerByEmail(user.email)
         .then((response) => {
-          console.log(JSON.parse(JSON.stringify(response.data)), "Found user");
           this.saveUserOrder(response.data._id, order);
 
-          // Update customer information, incase user updated their name, location, phone number, e.t.c
-          // TODO
+          // Update customer information, incase user updated their name,
+          // location, phone number, e.t.c EXCEPT email
+          const oldInfo = JSON.parse(localStorage.getItem("md_user"));
+          if (this.infoChanged(oldInfo, user)) {
+            user.userId = oldInfo._id;
+            this.uCustomerInfo(user);
+          }
         })
         .catch((error) => {
           if (error?.response?.status === 404) {
@@ -156,7 +161,6 @@ export default defineComponent({
     async saveCustomer(payload, order) {
       await register(payload)
         .then((res) => {
-          console.log(JSON.parse(JSON.stringify(res.data)), "Saved user");
           // Store customer info in localstorage
           this.cacheUser(res.data);
 
@@ -194,6 +198,16 @@ export default defineComponent({
         });
     },
 
+    async uCustomerInfo(data) {
+      // Update user profile
+      await uCustomer(data)
+        .then((res) => {
+          // Store customer info in localstorage
+          this.cacheUser(res.data);
+        })
+        .catch((error) => {});
+    },
+
     cacheUser(data) {
       if (typeof Storage !== undefined) {
         // Remove any existing record in localstorage
@@ -201,6 +215,18 @@ export default defineComponent({
         // Save new information
         localStorage.setItem("md_user", JSON.stringify(data));
       }
+    },
+
+    infoChanged(oldInfo, newInfo) {
+      if (
+        oldInfo?.firstname !== newInfo?.firstname ||
+        oldInfo?.lastname !== newInfo?.lastname ||
+        oldInfo?.cellPhone !== newInfo?.cellPhone ||
+        oldInfo?.location !== newInfo?.location
+      ) {
+        return true;
+      }
+      return false;
     },
 
     getCheckoutAmnt() {

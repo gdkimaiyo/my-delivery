@@ -19,7 +19,7 @@ export const getCustomerByEmail = async (email) => {
   return response.data;
 };
 
-// Update user order requests / deliveries: u for Update
+// Update user / customer info: u for Update
 export const uCustomer = async (data) => {
   const response = await axios.put(
     `${BACKEND_API}/api/v1/customers/${data.userId}`,
