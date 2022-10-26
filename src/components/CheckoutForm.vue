@@ -110,6 +110,18 @@ export default defineComponent({
     };
   },
 
+  created() {
+    const customer = JSON.parse(localStorage.getItem("md_user"));
+    let first = customer?.firstname !== undefined ? customer?.firstname : "";
+    let last = customer?.lastname !== undefined ? customer?.lastname : "";
+    this.fullname = first !== "" || last !== "" ? `${first} ${last}` : null;
+    this.cellPhone =
+      customer?.cellPhone !== undefined ? customer?.cellPhone : null;
+    this.location =
+      customer?.location !== undefined ? customer?.location : null;
+    this.email = customer?.email !== undefined ? customer?.email : null;
+  },
+
   methods: {
     async onSubmit() {
       this.isLoading = true;
