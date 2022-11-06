@@ -69,8 +69,93 @@
             class="q-mb-lg"
             style="min-height: 200px"
           >
-            <div class="text-h6">My Order History</div>
-            <div class="subtitle q-my-lg">Order history unavailable!</div>
+            <div class="text-h6 q-mr-md">
+              My Order History
+              <q-btn
+                unelevated
+                round
+                dense
+                color="primary"
+                icon="fas fa-rotate-right"
+                style="float: right"
+                @click="refreshHistory"
+              >
+                <q-tooltip class="q-gt-xs bg-primary" :offset="[10, 10]">
+                  <q-spinner-dots
+                    v-if="isRefreshing"
+                    color="white"
+                    size="1.6em"
+                    class="q-pr-sm"
+                  />
+                  <span v-if="isRefreshing">Refreshing</span>
+                  <span v-else>Refresh history</span>
+                </q-tooltip>
+              </q-btn>
+            </div>
+            <div class="q-my-lg" v-if="orders !== null && orders?.length > 0">
+              <q-list bordered class="rounded-borders">
+                <q-expansion-item
+                  v-for="order in userOrders"
+                  :key="order._id"
+                  expand-separator
+                  :label="order.label"
+                  :caption="order.date"
+                >
+                  <q-card class="">
+                    <div
+                      class="items-history"
+                      v-for="item in order.order"
+                      :key="item._id"
+                    >
+                      <q-list dense>
+                        <q-item>
+                          <q-item-section>
+                            <q-item-label>
+                              {{ item.quantity }}
+                              <q-icon
+                                name="fas fa-circle"
+                                class="subtitle q-px-sm"
+                                size="6px"
+                              />
+                              {{ item.item }}
+                            </q-item-label>
+                          </q-item-section>
+
+                          <q-item-section side middle>
+                            <q-item-label caption>
+                              {{ formatCurrency(item.price * item.quantity) }}
+                            </q-item-label>
+                          </q-item-section>
+                        </q-item>
+                      </q-list>
+                    </div>
+                    <div class="row justify-end items-amnt">
+                      <div class="q-mb-md">
+                        <span class="total-label q-pr-sm">Amount</span>
+                        <span class="checkout-total">
+                          {{ formatCurrency(order.amount) }}
+                        </span>
+                      </div>
+                    </div>
+                  </q-card>
+                </q-expansion-item>
+                <q-pagination
+                  v-if="orders?.length > perPage"
+                  class="q-mt-lg q-mb-md q-ml-sm"
+                  v-model="page"
+                  :max="totalPages"
+                  direction-links
+                  @update:model-value="changePage"
+                />
+              </q-list>
+            </div>
+
+            <div
+              class="subtitle q-my-lg"
+              v-if="orders === null || orders?.length == 0"
+            >
+              Order history unavailable!
+            </div>
           </q-step>
 
           <!-- <template v-slot:navigation>
@@ -172,11 +257,13 @@
 
 <script>
 import { defineComponent, ref } from "vue";
-import { Notify } from "quasar";
-import { getItems } from "../shared/services/item.service";
+import { date, Notify } from "quasar";
 import AllItems from "../components/AllItems.vue";
 import ShoppingCart from "../components/ShoppingCart.vue";
 import CheckoutForm from "../components/CheckoutForm.vue";
+import { getItems } from "../shared/services/item.service";
+import { getDeliveries } from "../shared/services/delivery.service";
+import { formatCurrency, fetchNextPage } from "../utils/heplers";
 
 export default defineComponent({
   name: "MakeOrder",
@@ -189,13 +276,26 @@ export default defineComponent({
 
   setup() {
     const cart = JSON.parse(localStorage.getItem("my_cart"));
+    const orders = JSON.parse(localStorage.getItem("my_orders"));
 
     return {
       step: ref(cart?.length > 0 ? 2 : 1),
       items: ref(null),
       cartItems: ref(cart),
+      orders: ref(orders),
+      userOrders: ref(null),
+      page: ref(1),
+      perPage: ref(5),
+      totalPages: ref(1),
       isLoading: ref(false),
+      isRefreshing: ref(false),
     };
+  },
+
+  created() {
+    this.orders = this.formatOrders(this.orders, false);
+    this.userOrders = fetchNextPage(this.orders, this.page, this.perPage);
+    this.totalPages = ref(Math.ceil(this.orders.length / this.perPage));
   },
 
   methods: {
@@ -258,6 +358,63 @@ export default defineComponent({
         timeout: 6000,
       });
     },
+
+    refreshHistory() {
+      this.isRefreshing = true;
+      getDeliveries()
+        .then((response) => {
+          this.page = 1;
+          this.orders = this.formatOrders(response.data, true);
+          this.userOrders = fetchNextPage(this.orders, this.page, this.perPage);
+          this.totalPages = ref(Math.ceil(this.orders.length / this.perPage));
+          this.isRefreshing = false;
+        })
+        .catch((error) => {
+          this.isRefreshing = false;
+          Notify.create({
+            type: "negative",
+            message: "Reresh failed. Please check your CONNECTION.",
+            group: false,
+            timeout: 5000,
+          });
+        });
+    },
+
+    changePage() {
+      this.userOrders = fetchNextPage(this.orders, this.page, this.perPage);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    },
+
+    formatOrders(data, isObject) {
+      const user = JSON.parse(localStorage.getItem("md_user"));
+
+      data = isObject
+        ? data?.filter((item) => item?.customer?._id == user?._id)
+        : data?.filter((item) => item?.customer == user?._id);
+
+      data?.forEach((item) => {
+        item.label = `Ordered ${item.order.length} items`;
+        item.date = `${this.dateFormatter(
+          item.created
+        )} at ${this.timeFormatter(item.created)}`;
+      });
+
+      data = data?.sort((a, b) => {
+        return new Date(b.created) - new Date(a.created);
+      });
+
+      return data;
+    },
+
+    dateFormatter(timeStamp) {
+      return date.formatDate(new Date(timeStamp), "MMMM DD, YYYY");
+    },
+
+    timeFormatter(timeStamp) {
+      return date.formatDate(new Date(timeStamp), "HH:mm");
+    },
+
+    formatCurrency,
   },
 
   mounted() {
@@ -296,6 +453,23 @@ export default defineComponent({
   color: rgba(121, 131, 143, 0.85);
 }
 
+.total-label {
+  color: rgba(0, 0, 0, 0.61);
+  font-size: 14px;
+  font-weight: 500;
+}
+.checkout-total {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.items-history {
+  padding: 0 16px;
+}
+.items-amnt {
+  padding-right: 30px;
+}
+
 @media only screen and (max-width: 575px) {
   .all-items-header {
     font-size: 24px;
@@ -313,6 +487,12 @@ export default defineComponent({
   .order-details {
     width: 100%;
     max-width: 100%;
+  }
+  .items-history {
+    padding: 0;
+  }
+  .items-amnt {
+    padding-right: 16px;
   }
 }
 </style>
