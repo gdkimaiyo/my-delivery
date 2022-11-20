@@ -68,6 +68,11 @@ export default defineComponent({
           this.items = this.items?.filter(
             (item) => item?.category?._id === this.categoryId
           );
+          const cart = JSON.parse(localStorage.getItem("my_cart"));
+          this.items.forEach((element) => {
+            const inCart = cart?.filter((item) => item?._id === element?._id);
+            element.inCart = inCart?.length > 0 ? inCart[0]?.quantity : 0;
+          });
           this.isLoading = false;
         })
         .catch((error) => {

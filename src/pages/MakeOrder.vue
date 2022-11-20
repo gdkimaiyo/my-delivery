@@ -263,7 +263,11 @@ import ShoppingCart from "../components/ShoppingCart.vue";
 import CheckoutForm from "../components/CheckoutForm.vue";
 import { getItems } from "../shared/services/item.service";
 import { getDeliveries } from "../shared/services/delivery.service";
-import { formatCurrency, fetchNextPage } from "../utils/heplers";
+import {
+  formatCurrency,
+  fetchNextPage,
+  getRandomItems,
+} from "../utils/heplers";
 
 export default defineComponent({
   name: "MakeOrder",
@@ -285,7 +289,7 @@ export default defineComponent({
       orders: ref(orders),
       userOrders: ref(null),
       page: ref(1),
-      perPage: ref(5),
+      perPage: ref(10),
       totalPages: ref(1),
       isLoading: ref(false),
       isRefreshing: ref(false),
@@ -304,6 +308,15 @@ export default defineComponent({
       getItems()
         .then((response) => {
           this.items = response.data;
+          this.cartItems = JSON.parse(localStorage.getItem("my_cart"));
+          this.items.forEach((element) => {
+            const inCart = this.cartItems?.filter(
+              (item) => item?._id === element?._id
+            );
+            element.inCart = inCart?.length > 0 ? inCart[0]?.quantity : 0;
+          });
+          // Shuffle items
+          this.items = getRandomItems(this.items, this.items?.length);
           this.isLoading = false;
         })
         .catch((error) => {
