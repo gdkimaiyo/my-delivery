@@ -193,6 +193,16 @@ export default defineComponent({
         .then((response) => {
           this.items = response.data;
 
+          const cart = JSON.parse(localStorage.getItem("my_cart"));
+          this.items.forEach((element) => {
+            const inCart = cart?.filter((item) => item?._id === element?._id);
+            element.inCart = inCart?.length > 0 ? inCart[0]?.quantity : 0;
+          });
+          console.log(JSON.parse(JSON.stringify(this.items)), "md items");
+
+          // Shuffle items
+          this.items = getRandomItems(this.items, this.items?.length);
+
           const chunkSize = 2;
           for (let i = 0; i < this.items.length; i += chunkSize) {
             const chunk = this.items.slice(i, i + chunkSize);
